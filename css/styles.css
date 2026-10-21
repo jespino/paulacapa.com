@@ -530,6 +530,7 @@ ul, ol { padding: 0; list-style: none; }
 .gallery-item .media { height: 100%; }
 .gallery-item.g-tall { grid-row: span 2; }
 .gallery-item.g-wide { grid-column: span 2; }
+.gallery-item.g-big { grid-column: span 2; grid-row: span 2; }
 .gallery-item img { filter: grayscale(.15); object-position: center 22%; }
 .gallery-item:hover img { transform: scale(1.05); filter: grayscale(0); }
 .gallery-item::after {
