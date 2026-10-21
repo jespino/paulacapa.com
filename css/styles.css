@@ -504,6 +504,8 @@ ul, ol { padding: 0; list-style: none; }
   margin-top: clamp(4rem, 8vw, 6rem);
 }
 .highlight .media { margin-bottom: 1.4rem; }
+.highlight .media img { object-position: center 25%; }
+.highlight .media--top img { object-position: center top; }
 .highlight:hover .media img { transform: scale(1.04); }
 .highlight-meta { color: var(--accent); margin-bottom: .5rem; }
 .highlight-title {
