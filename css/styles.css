@@ -37,6 +37,7 @@
   --line: rgba(20, 19, 15, .14);
   --line-light: rgba(246, 243, 238, .16);
   --accent: #9a7b5f;
+  --accent-on-light: #7c634d; /* mismo tono, oscurecido para 4,5:1 sobre los fondos claros */
 
   --serif: "Cormorant Garamond", "Times New Roman", serif;
   --sans: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -153,7 +154,8 @@ ul, ol { padding: 0; list-style: none; }
 
 .section { padding-block: var(--section-y); }
 .section--dark { background: var(--ink); color: var(--paper); }
-.section--soft { background: var(--paper-2); }
+.section:not(.section--dark) { --accent: var(--accent-on-light); }
+.section--soft { background: var(--paper-2); --muted: #6c675e; /* 4,5:1 sobre este fondo, algo más oscuro */ }
 
 .section-head {
   display: grid;

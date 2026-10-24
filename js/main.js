@@ -26,18 +26,33 @@
     header.classList.add('show-brand');
   }
 
+  // Mientras un menú o visor cubre la pantalla, el resto de la página queda inerte:
+  // el teclado no puede salir de él y los lectores de pantalla ignoran lo de detrás
+  function setInertExcept(keep, on) {
+    Array.prototype.forEach.call(body.children, function (el) {
+      if (el !== keep && el.tagName !== 'SCRIPT') el.inert = on;
+    });
+  }
+
   // ---------- Menú móvil ----------
   var toggle = document.querySelector('.nav-toggle');
+  var brand = document.querySelector('.brand');
   function setNav(open) {
     body.classList.toggle('nav-open', open);
     toggle.setAttribute('aria-expanded', String(open));
     toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+    setInertExcept(header, open);
+    brand.inert = open;
   }
   toggle.addEventListener('click', function () {
     setNav(!body.classList.contains('nav-open'));
   });
   document.querySelectorAll('.main-nav a').forEach(function (a) {
     a.addEventListener('click', function () { setNav(false); });
+  });
+  // Al pasar a escritorio el menú móvil desaparece: se cierra para no dejar la página inerte
+  window.matchMedia('(min-width: 861px)').addEventListener('change', function (e) {
+    if (e.matches && body.classList.contains('nav-open')) setNav(false);
   });
 
   // ---------- Enlace activo según la sección visible ----------
@@ -110,12 +125,14 @@
     lastFocus = document.activeElement;
     lb.hidden = false;
     body.style.overflow = 'hidden';
+    setInertExcept(lb, true);
     requestAnimationFrame(function () { lb.classList.add('is-open'); });
     lb.querySelector('.lb-close').focus();
   }
   function closeLightbox() {
     lb.classList.remove('is-open');
     body.style.overflow = '';
+    setInertExcept(lb, false);
     setTimeout(function () {
       lb.hidden = true;
       lb.classList.remove('is-video');
@@ -235,7 +252,7 @@
     if (e.target === lb || e.target === stage) closeLightbox();
   });
   document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && body.classList.contains('nav-open')) setNav(false);
+    if (e.key === 'Escape' && body.classList.contains('nav-open')) { setNav(false); toggle.focus(); }
     if (lb.hidden) return;
     if (e.key === 'Escape') closeLightbox();
     if (lb.classList.contains('is-video')) return;
