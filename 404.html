@@ -13,19 +13,42 @@
   <style>
     .not-found {
       min-height: 100vh;
-      display: flex; flex-direction: column; justify-content: center; gap: 2.5rem;
-      padding: var(--section-y) var(--gutter);
+      display: grid;
+      grid-template-rows: auto 1fr;
       background: var(--ink); color: var(--paper);
     }
-    .not-found .hero-title { margin: 0; }
-    .not-found p { color: var(--muted-light); max-width: 30rem; }
+    .not-found-top { padding: 1.5rem var(--gutter); }
+    .not-found-body {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 2rem var(--gutter) 6rem;
+    }
+    .not-found-code {
+      font-family: var(--serif); font-weight: 300; font-style: italic;
+      font-size: clamp(7rem, 24vw, 15rem);
+      line-height: .9;
+      color: var(--accent);
+    }
+    .not-found-title {
+      font-family: var(--serif); font-weight: 300;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      line-height: 1.1;
+      margin: 1.5rem 0 1rem;
+    }
+    .not-found-body p { color: var(--muted-light); max-width: 26rem; margin-bottom: 2.5rem; }
   </style>
 </head>
 <body>
-  <main class="not-found">
-    <h1 class="hero-title"><span>Paula</span><span class="indent">Capa</span></h1>
-    <p>Esta página no existe o ha cambiado de sitio.</p>
-    <div><a href="/" class="btn btn--solid">Volver al inicio</a></div>
-  </main>
+  <div class="not-found">
+    <header class="not-found-top">
+      <a href="/" class="footer-brand">Paula Capa</a>
+    </header>
+    <main class="not-found-body">
+      <div class="not-found-code" aria-hidden="true">404</div>
+      <h1 class="not-found-title">Página no encontrada</h1>
+      <p>La página que buscas no existe o ha cambiado de dirección.</p>
+      <a href="/" class="btn btn--solid">Volver al inicio</a>
+    </main>
+  </div>
 </body>
 </html>
