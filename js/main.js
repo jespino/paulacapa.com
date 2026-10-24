@@ -157,6 +157,41 @@
     return m ? m[1] : null;
   }
 
+  // API de YouTube, cargada solo la primera vez que se abre un vídeo
+  var ytQueue = null;
+  function withYouTubeApi(cb) {
+    if (window.YT && window.YT.Player) return cb();
+    if (ytQueue) return ytQueue.push(cb);
+    ytQueue = [cb];
+    window.onYouTubeIframeAPIReady = function () {
+      ytQueue.forEach(function (fn) { fn(); });
+    };
+    var script = document.createElement('script');
+    script.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(script);
+  }
+
+  // YouTube puede activar por su cuenta subtítulos automáticos y ningún parámetro del
+  // embed los desactiva (cc_load_policy solo sirve para forzarlos). Se vacía la pista
+  // hasta que empieza la reproducción; después el visitante puede activarlos con CC.
+  function hideCaptionsOnce(iframe) {
+    withYouTubeApi(function () {
+      if (!iframe.isConnected) return;
+      var playing = false;
+      function clear(player) {
+        if ((player.getOptions() || []).indexOf('captions') > -1) player.setOption('captions', 'track', {});
+      }
+      new YT.Player(iframe, { events: {
+        onApiChange: function (e) { if (!playing) clear(e.target); },
+        onStateChange: function (e) {
+          if (playing || e.data !== YT.PlayerState.PLAYING) return;
+          playing = true;
+          clear(e.target);
+        }
+      } });
+    });
+  }
+
   document.querySelectorAll('.video-card').forEach(function (card) {
     card.addEventListener('click', function () {
       var id = youtubeId(card.getAttribute('data-youtube'));
@@ -164,11 +199,18 @@
       stage.innerHTML = '';
       if (id) {
         var iframe = document.createElement('iframe');
-        iframe.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0';
-        iframe.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture';
+        // Reproducción limpia para un videobook: arranca sola, con sonido (el clic cuenta como gesto),
+        // sin vídeos de otros canales al terminar, sin anotaciones y en línea en iOS
+        var params = 'autoplay=1&rel=0&playsinline=1&iv_load_policy=3&color=white&enablejsapi=1';
+        if (/^https?:/.test(location.protocol)) params += '&origin=' + encodeURIComponent(location.origin);
+        iframe.src = 'https://www.youtube-nocookie.com/embed/' + id + '?' + params;
+        iframe.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture; accelerometer; gyroscope';
         iframe.allowFullscreen = true;
+        // YouTube exige el Referer para identificar la web que incrusta el vídeo
+        iframe.referrerPolicy = 'strict-origin-when-cross-origin';
         iframe.title = card.getAttribute('aria-label') || 'Vídeo';
         stage.appendChild(iframe);
+        hideCaptionsOnce(iframe);
       } else {
         var msg = document.createElement('p');
         msg.className = 'lb-message';

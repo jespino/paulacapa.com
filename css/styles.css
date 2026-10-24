@@ -589,7 +589,15 @@ ul, ol { padding: 0; list-style: none; }
 }
 .lb-stage > img { max-width: 100%; max-height: 100%; }
 .lb-stage .media { width: min(70vw, 560px); aspect-ratio: 4 / 5; }
-.lb-stage iframe { width: 100%; aspect-ratio: 16 / 9; height: auto; max-height: 100%; border: 0; }
+/* Vídeo lo más grande posible sin deformarse: YouTube elige la calidad según el tamaño del reproductor */
+.lightbox.is-video .lb-stage { width: min(94vw, 1600px); height: min(88vh, 900px); }
+.lb-stage iframe {
+  width: min(100%, calc(min(88vh, 900px) * 16 / 9));
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border: 0;
+  background: #000;
+}
 .lb-stage .lb-message {
   font-family: var(--serif); font-size: 1.6rem; font-style: italic;
   color: var(--muted-light); text-align: center;
