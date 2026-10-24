@@ -114,8 +114,6 @@
     lb.querySelector('.lb-close').focus();
   }
   function closeLightbox() {
-    var playing = stage.querySelector('video');
-    if (playing) playing.pause();
     lb.classList.remove('is-open');
     body.style.overflow = '';
     setTimeout(function () {
@@ -151,30 +149,23 @@
     });
   });
 
+  // Acepta un ID de YouTube o un enlace (watch?v=, youtu.be/, shorts/, embed/)
+  function youtubeId(value) {
+    value = (value || '').trim();
+    if (/^[\w-]{11}$/.test(value)) return value;
+    var m = value.match(/(?:v=|youtu\.be\/|\/shorts\/|\/embed\/)([\w-]{11})/);
+    return m ? m[1] : null;
+  }
+
   document.querySelectorAll('.video-card').forEach(function (card) {
     card.addEventListener('click', function () {
-      var url = card.getAttribute('data-video');
+      var id = youtubeId(card.getAttribute('data-youtube'));
       lb.classList.add('is-video');
       stage.innerHTML = '';
-      if (/\.(webm|mp4)$/.test(url)) {
-        var video = document.createElement('video');
-        video.controls = true;
-        video.autoplay = true;
-        video.playsInline = true;
-        var poster = card.querySelector('.media:not(.is-empty) img');
-        if (poster) video.poster = poster.src;
-        [url, card.getAttribute('data-video-fallback')].forEach(function (src) {
-          if (!src) return;
-          var source = document.createElement('source');
-          source.src = src;
-          source.type = /\.webm$/.test(src) ? 'video/webm' : 'video/mp4';
-          video.appendChild(source);
-        });
-        stage.appendChild(video);
-      } else if (url) {
+      if (id) {
         var iframe = document.createElement('iframe');
-        iframe.src = url + (url.indexOf('?') > -1 ? '&' : '?') + 'autoplay=1';
-        iframe.allow = 'autoplay; fullscreen; picture-in-picture';
+        iframe.src = 'https://www.youtube-nocookie.com/embed/' + id + '?autoplay=1&rel=0';
+        iframe.allow = 'autoplay; encrypted-media; fullscreen; picture-in-picture';
         iframe.allowFullscreen = true;
         iframe.title = card.getAttribute('aria-label') || 'Vídeo';
         stage.appendChild(iframe);
