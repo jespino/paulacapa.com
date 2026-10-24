@@ -132,10 +132,17 @@
     if (figure.classList.contains('is-empty')) {
       stage.appendChild(figure.cloneNode(true));
     } else {
+      // WebP con el JPG del enlace como alternativa, igual que en la galería
+      var picture = document.createElement('picture');
+      var source = document.createElement('source');
+      source.srcset = item.getAttribute('href').replace(/\.jpg$/, '.webp');
+      source.type = 'image/webp';
       var img = document.createElement('img');
       img.src = item.getAttribute('href');
       img.alt = item.querySelector('img').alt;
-      stage.appendChild(img);
+      picture.appendChild(source);
+      picture.appendChild(img);
+      stage.appendChild(picture);
     }
     counter.textContent = (current + 1) + ' / ' + items.length;
   }
