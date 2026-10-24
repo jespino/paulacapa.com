@@ -361,30 +361,8 @@ ul, ol { padding: 0; list-style: none; }
   gap: clamp(2.5rem, 7vw, 7rem);
   align-items: start;
 }
-.about-photo { position: sticky; top: calc(var(--header-h) + 2rem); }
 .about-photo img { object-position: center 15%; }
 .about-text > p:not(.lead) { color: var(--muted); margin-bottom: 1.2rem; max-width: 36rem; }
-
-.specs {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  margin-top: 3rem;
-  border-top: 1px solid var(--line);
-}
-.specs div {
-  padding: 1.1rem 0;
-  border-bottom: 1px solid var(--line);
-  display: flex; flex-direction: column; gap: .2rem;
-}
-.specs div:nth-child(odd) { padding-right: 1.5rem; }
-.specs dt {
-  font-size: .66rem;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.specs dd { font-family: var(--serif); font-size: 1.3rem; }
-
 .about-actions { display: flex; flex-wrap: wrap; gap: 2.5rem; margin-top: 3rem; }
 
 /* ---------- Videobook ---------- */
@@ -710,7 +688,7 @@ ul, ol { padding: 0; list-style: none; }
 
   .about-grid,
   .contact-grid { grid-template-columns: 1fr; }
-  .about-photo { position: static; max-width: 30rem; }
+  .about-photo { max-width: 30rem; }
 
   .video-row { grid-template-columns: 1fr; }
   .media--cinema { aspect-ratio: 16 / 9; }
@@ -734,7 +712,5 @@ ul, ol { padding: 0; list-style: none; }
 @media (max-width: 520px) {
   .section-head { grid-template-columns: 1fr; row-gap: 1rem; }
   .section-intro { grid-column: 1; }
-  .specs { grid-template-columns: 1fr; }
-  .specs div:nth-child(odd) { padding-right: 0; }
   .hero-actions .btn { flex: 1 1 auto; justify-content: center; }
 }

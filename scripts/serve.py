@@ -51,6 +51,8 @@ class RangeHandler(SimpleHTTPRequestHandler):
 
     def end_headers(self):
         self.send_header("Accept-Ranges", "bytes")
+        # Evita que el navegador sirva CSS/JS antiguos mientras se edita
+        self.send_header("Cache-Control", "no-cache")
         super().end_headers()
 
 
