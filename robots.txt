@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://paulacapa.com/sitemap.xml
