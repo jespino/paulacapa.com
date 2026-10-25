@@ -9,31 +9,102 @@
   <link rel="icon" href="favicon.ico" sizes="48x48">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="preload" href="fonts/cormorant-garamond.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/cormorant-garamond-italic.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fonts/manrope.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/styles.css">
   <style>
     .cv-top { background: var(--ink); padding-block: 1.5rem; }
     .cv-top .footer-brand { font-size: 1.5rem; }
-    .cv-intro { max-width: 46rem; }
-    .cv-intro .lead { margin-bottom: 2rem; }
-    .cv-contact {
-      display: flex; flex-wrap: wrap; gap: 1rem 2.5rem;
-      padding: 1.5rem 0;
-      border-block: 1px solid var(--line);
+
+    /* Cabecera: foto, nombre y perfil */
+    /* Mismas columnas que el cuerpo: la foto ocupa el ancho de la columna de datos y
+       el texto arranca en la vertical de la trayectoria */
+    .cv-hero {
+      display: grid;
+      grid-template-columns: 15rem 1fr;
+      grid-template-rows: auto auto;
+      column-gap: clamp(2rem, 6vw, 5rem);
+      row-gap: 1.75rem;
+      padding-bottom: clamp(2.5rem, 5vw, 3.5rem);
+      border-bottom: 1px solid var(--line);
     }
-    .cv-contact dt { font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
-    .cv-ficha { border-top: 0; }
-    .cv-contact dd a { text-decoration: underline; text-underline-offset: .2em; }
-    .cv-actions { display: flex; flex-wrap: wrap; gap: 2.5rem; margin-top: 2.5rem; }
-    .cv-section-title {
-      font-family: var(--serif); font-weight: 400;
-      font-size: clamp(1.8rem, 3.5vw, 2.4rem);
-      margin: clamp(3.5rem, 7vw, 5rem) 0 .5rem;
+    /* La foto se estira a la altura del texto: arriba con el antetítulo, abajo con el perfil */
+    .cv-photo { grid-row: span 2; position: relative; min-height: 14rem; }
+    .cv-photo img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; object-position: center 15%;
+    }
+    .cv-eyebrow { line-height: 1; font-size: .72rem; letter-spacing: .22em; text-transform: uppercase; color: var(--accent); }
+    .cv-name {
+      font-family: var(--serif); font-weight: 300;
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      line-height: .95;
+      margin: .75rem 0 .5rem;
+    }
+    .cv-role { font-size: .8rem; letter-spacing: .3em; text-transform: uppercase; color: var(--muted); }
+    .cv-hero .lead { grid-column: 2; max-width: 38rem; margin: 0; }
+
+    /* Cuerpo: datos a la izquierda, trayectoria a la derecha */
+    .cv-body {
+      display: grid;
+      grid-template-columns: 15rem 1fr;
+      gap: clamp(2rem, 6vw, 5rem);
+      padding-top: clamp(2.5rem, 5vw, 3.5rem);
+    }
+    .cv-aside h2, .cv-section-title {
+      font-size: .72rem; font-weight: 500; letter-spacing: .22em; text-transform: uppercase;
+      color: var(--accent);
+      padding-bottom: .75rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .cv-block + .cv-block { margin-top: 2.5rem; }
+    .cv-data div { padding: .7rem 0; border-bottom: 1px solid var(--line); }
+    .cv-data dt { font-size: .7rem; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+    .cv-data dd { margin-top: .15rem; }
+    .cv-data dd a { text-decoration: underline; text-underline-offset: .2em; }
+    .cv-actions { display: flex; flex-direction: column; align-items: flex-start; gap: 1.5rem; margin-top: 2.5rem; }
+
+    /* Trayectoria agrupada por periodos */
+    .cv-section + .cv-section { margin-top: clamp(3rem, 6vw, 4.5rem); }
+    .cv-period {
+      display: grid;
+      grid-template-columns: 7rem 1fr;
+      gap: 1rem;
+      padding: 1.4rem 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .cv-period-dates { font-size: .78rem; letter-spacing: .14em; color: var(--accent); padding-top: .3rem; }
+    .cv-entry + .cv-entry { margin-top: 1.25rem; }
+    .cv-entry-cat { font-size: .68rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); }
+    .cv-entry-title { font-family: var(--serif); font-size: clamp(1.35rem, 2.2vw, 1.7rem); line-height: 1.2; margin-top: .15rem; }
+    .cv-entry-detail { font-size: .9rem; line-height: 1.55; color: var(--muted); margin-top: .25rem; max-width: 40rem; }
+    /* La formación, más compacta que la experiencia */
+    .cv-section--compact .cv-entry + .cv-entry { margin-top: 1rem; }
+    .cv-section--compact .cv-entry-title { font-size: 1.25rem; }
+
+    @media (max-width: 860px) {
+      .cv-hero { grid-template-columns: 13rem 1fr; }
+      .cv-body { grid-template-columns: 1fr; }
+      .cv-aside { order: 0; }
+      .cv-data { display: grid; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); column-gap: 1.5rem; }
+      .cv-actions { flex-direction: row; flex-wrap: wrap; gap: 1.5rem 2.5rem; }
+    }
+    @media (max-width: 600px) {
+      .cv-hero { grid-template-columns: 7.5rem 1fr; grid-template-rows: auto; align-items: center; column-gap: 1.25rem; }
+      .cv-photo { grid-row: auto; min-height: 0; }
+      .cv-photo img { position: static; height: auto; aspect-ratio: 4 / 5; }
+      .cv-hero .lead { grid-column: 1 / -1; }
+      .cv-name { font-size: 2.6rem; }
+      .cv-period { grid-template-columns: 1fr; gap: .5rem; }
+      .cv-period-dates { padding-top: 0; }
     }
     @media print {
       .cv-top, .cv-actions, .site-footer, .skip-link { display: none; }
       .section { padding-block: 0; }
-      .credit-list li { padding-block: .6rem; break-inside: avoid; }
+      .cv-hero { grid-template-columns: 12rem 1fr; }
+      .cv-body { grid-template-columns: 12rem 1fr; }
+      .cv-period { break-inside: avoid; padding-block: .8rem; }
       .cv-section-title { break-after: avoid; }
     }
   </style>
@@ -47,136 +118,234 @@
 
   <main class="section" id="main">
     <div class="container">
-      <header class="section-head">
-        <h1 class="section-title">Currículum</h1>
+      <header class="cv-hero">
+        <figure class="cv-photo">
+          <picture><source srcset="img/sobre-mi-480.webp 480w, img/sobre-mi-800.webp 800w" sizes="(max-width: 600px) 7.5rem, 15rem" type="image/webp"><img src="img/sobre-mi.jpg" alt="Retrato de Paula Capa" width="933" height="1400" fetchpriority="high"></picture>
+        </figure>
+        <div>
+          <p class="cv-eyebrow">Currículum artístico</p>
+          <h1 class="cv-name">Paula Capa</h1>
+          <p class="cv-role">Actriz</p>
+        </div>
+        <p class="lead">Actriz con formación continua en teatro, interpretación ante la cámara y doblaje. Experiencia en gira con espectáculos familiares y como presentadora.</p>
       </header>
 
-      <div class="cv-intro">
-        <p class="lead">Actriz con formación continua en teatro, interpretación ante la cámara y doblaje. Experiencia en gira con espectáculos familiares y como presentadora.</p>
+      <div class="cv-body">
+        <aside class="cv-aside">
+          <section class="cv-block" aria-labelledby="cv-contacto">
+            <h2 id="cv-contacto">Contacto</h2>
+            <dl class="cv-data">
+              
+              <div>
+                <dt>Teléfono</dt>
+                <dd><a href="tel:+34667403074">667 403 074</a></dd>
+              </div>
+              
+              <div>
+                <dt>Email</dt>
+                <dd><a href="mailto:hola@paulacapa.com">hola@paulacapa.com</a></dd>
+              </div>
+              
+              <div>
+                <dt>Ciudad</dt>
+                <dd>Guadalajara / Madrid</dd>
+              </div>
+              
+            </dl>
+          </section>
 
-        <dl class="cv-contact">
           
-          <div>
-            <dt>Teléfono</dt>
-            <dd><a href="tel:+34667403074">667 403 074</a></dd>
-          </div>
+          <section class="cv-block" aria-labelledby="cv-ficha">
+            <h2 id="cv-ficha">Ficha artística</h2>
+            <dl class="cv-data">
+              
+              <div>
+                <dt>Edad escénica</dt>
+                <dd>38 – 48</dd>
+              </div>
+              
+              <div>
+                <dt>Estatura</dt>
+                <dd>165 cm</dd>
+              </div>
+              
+              <div>
+                <dt>Talla</dt>
+                <dd>38</dd>
+              </div>
+              
+              <div>
+                <dt>Ojos</dt>
+                <dd>Marrones</dd>
+              </div>
+              
+              <div>
+                <dt>Pelo</dt>
+                <dd>Castaño con mechas rubias</dd>
+              </div>
+              
+            </dl>
+          </section>
           
-          <div>
-            <dt>Email</dt>
-            <dd><a href="mailto:hola@paulacapa.com">hola@paulacapa.com</a></dd>
-          </div>
-          
-          <div>
-            <dt>Ciudad</dt>
-            <dd>Guadalajara / Madrid</dd>
-          </div>
-          
-        </dl>
 
-        
-        <dl class="cv-contact cv-ficha" aria-label="Ficha artística">
-          
-          <div>
-            <dt>Edad escénica</dt>
-            <dd>38 – 48</dd>
+          <div class="cv-actions">
+            <a href="docs/cv-paula-capa.pdf" class="link-arrow" download>Descargar PDF <span aria-hidden="true">↓</span></a>
+            <a href="./#videobook" class="link-arrow">Ver videobook <span aria-hidden="true">→</span></a>
           </div>
-          
-          <div>
-            <dt>Estatura</dt>
-            <dd>165 cm</dd>
-          </div>
-          
-          <div>
-            <dt>Talla</dt>
-            <dd>38</dd>
-          </div>
-          
-          <div>
-            <dt>Ojos</dt>
-            <dd>Marrones</dd>
-          </div>
-          
-          <div>
-            <dt>Pelo</dt>
-            <dd>Castaño con mechas rubias</dd>
-          </div>
-          
-        </dl>
-        
+        </aside>
 
-        <div class="cv-actions">
-          <a href="docs/cv-paula-capa.pdf" class="link-arrow" download>Descargar PDF <span aria-hidden="true">↓</span></a>
-          <a href="./" class="link-arrow">Volver a la web <span aria-hidden="true">→</span></a>
+        <div class="cv-main">
+          
+          <section class="cv-section" aria-labelledby="cv-seccion-1">
+            <h2 class="cv-section-title" id="cv-seccion-1">Experiencia profesional</h2>
+            
+            <div class="cv-period">
+              <p class="cv-period-dates">2024 – 2026</p>
+              <ul class="cv-entries">
+                
+                <li class="cv-entry">
+                  <p class="cv-entry-cat">Teatro</p>
+                  <p class="cv-entry-title">Gira con el espectáculo familiar “Planeta al habla”</p>
+                  <p class="cv-entry-detail">Compañía Comando teatral</p>
+                </li>
+                
+                <li class="cv-entry">
+                  <p class="cv-entry-cat">Teatro</p>
+                  <p class="cv-entry-title">Gira con el espectáculo familiar “Ay socorro, mamaíta”</p>
+                  <p class="cv-entry-detail">Compañía Comando teatral</p>
+                </li>
+                
+              </ul>
+            </div>
+            
+            <div class="cv-period">
+              <p class="cv-period-dates">2023 – 2025</p>
+              <ul class="cv-entries">
+                
+                <li class="cv-entry">
+                  <p class="cv-entry-cat">Presentación</p>
+                  <p class="cv-entry-title">Presentadora del Festival de cine de Guadalajara FESCIGU</p>
+                  
+                </li>
+                
+              </ul>
+            </div>
+            
+          </section>
+          
+          <section class="cv-section cv-section--compact" aria-labelledby="cv-seccion-2">
+            <h2 class="cv-section-title" id="cv-seccion-2">Formación — Cursos y talleres</h2>
+            
+            <div class="cv-period">
+              <p class="cv-period-dates">2025 – 2026</p>
+              <ul class="cv-entries">
+                
+                <li class="cv-entry">
+                  <p class="cv-entry-cat">Cámara</p>
+                  <p class="cv-entry-title">Técnicas Tony Barr y Lesly Kahn</p>
+                  <p class="cv-entry-detail">Central de Cine, con Javier Alcina</p>
+                </li>
+                
+                <li class="cv-entry">
+                  <p class="cv-entry-cat">Teatro</p>
+                  <p class="cv-entry-title">Montaje “Manzanas”</p>
+                  <p class="cv-entry-detail">Escuela de Teatro de Guadalajara, dirigido por Ana Vélez</p>
+                </li>
+                
+                <li class="cv-entry">
+                  <p class="cv-entry-cat">Teatro</p>
+                  <p class="cv-entry-title">Montaje “Roxane Tenorio”</p>
+                  <p class="cv-entry-detail">Escuela de Teatro de Guadalajara, dirigido por Ana Vélez</p>
+                </li>
+                
+                <li class="cv-entry">
+                  <p class="cv-entry-cat">Audiovisual</p>
+                  <p class="cv-entry-title">Curso de ficción sonora</p>
+                  <p class="cv-entry-detail">Proceso completo de creación y producción: guion, grabación de voces y postproducción</p>
+                </li>
+                
+              </ul>
+            </div>
+            
+            <div class="cv-period">
+              <p class="cv-period-dates">2024 – 2025</p>
+              <ul class="cv-entries">
+                
+                <li class="cv-entry">
+                  <p class="cv-entry-cat">Audiovisual</p>
+                  <p class="cv-entry-title">Producción y distribución de vídeo podcasts</p>
+                  <p class="cv-entry-detail">RTVE</p>
+                </li>
+                
+                <li class="cv-entry">
+                  <p class="cv-entry-cat">Audiovisual</p>
+                  <p class="cv-entry-title">Guion de series de ficción</p>
+                  <p class="cv-entry-detail">RTVE</p>
+                </li>
+                
+                <li class="cv-entry">
+                  <p class="cv-entry-cat">Teatro</p>
+                  <p class="cv-entry-title">Taller de teatro en verso</p>
+                  <p class="cv-entry-detail">Con Ana Vélez, en la Escuela de teatro de Guadalajara</p>
+                </li>
+                
+                <li class="cv-entry">
+                  <p class="cv-entry-cat">Teatro</p>
+                  <p class="cv-entry-title">Montaje “Soy Federico”</p>
+                  <p class="cv-entry-detail">Dramaturgia y dirección de Ana Vélez, basado en las obras de Lorca</p>
+                </li>
+                
+              </ul>
+            </div>
+            
+            <div class="cv-period">
+              <p class="cv-period-dates">2023 – 2024</p>
+              <ul class="cv-entries">
+                
+                <li class="cv-entry">
+                  <p class="cv-entry-cat">Doblaje</p>
+                  <p class="cv-entry-title">Doblaje - Equiparación profesional</p>
+                  <p class="cv-entry-detail">Soundub</p>
+                </li>
+                
+                <li class="cv-entry">
+                  <p class="cv-entry-cat">Teatro</p>
+                  <p class="cv-entry-title">Seminario Cuerpo Expresivo</p>
+                  <p class="cv-entry-detail">Estudio Corazza, con Virginia de la Cruz y Pedro González</p>
+                </li>
+                
+                <li class="cv-entry">
+                  <p class="cv-entry-cat">Cámara</p>
+                  <p class="cv-entry-title">Interpretación ante la cámara, en Central de Cine</p>
+                  <p class="cv-entry-detail">Bases de la interpretación (Rocío Vidal), micro-emociones (Carmen Rico), arquetipos (Santi Senso), técnicas Tony Barr y Lesly Kahn (Javier Alcina) y técnica Chejov (Eva Manjón)</p>
+                </li>
+                
+              </ul>
+            </div>
+            
+            <div class="cv-period">
+              <p class="cv-period-dates">2022 – 2023</p>
+              <ul class="cv-entries">
+                
+                <li class="cv-entry">
+                  <p class="cv-entry-cat">Doblaje</p>
+                  <p class="cv-entry-title">Curso de especialización de voz</p>
+                  <p class="cv-entry-detail">Soundub: doblaje, publicidad, audiolibros y locución</p>
+                </li>
+                
+                <li class="cv-entry">
+                  <p class="cv-entry-cat">Teatro</p>
+                  <p class="cv-entry-title">Entrenamiento actoral de iniciación</p>
+                  <p class="cv-entry-detail">Estudio Corazza, con Violeta Pérez</p>
+                </li>
+                
+              </ul>
+            </div>
+            
+          </section>
+          
         </div>
       </div>
-
-      
-      <section aria-labelledby="cv-seccion-1">
-        <h2 class="cv-section-title" id="cv-seccion-1">Experiencia profesional</h2>
-        <ol class="credit-list credit-list--detail">
-          
-          
-          <li><span class="c-year">2025 – 2026</span><span class="c-title">Gira con el espectáculo familiar “Planeta al habla”<small class="c-detail">Compañía Comando teatral</small></span><span class="c-role">Teatro</span></li>
-          
-          <li><span class="c-year">2025 – 2026</span><span class="c-title">Gira con el espectáculo familiar “Ay socorro, mamaíta”<small class="c-detail">Compañía Comando teatral</small></span><span class="c-role">Teatro</span></li>
-          
-          
-          
-          <li><span class="c-year">2024 – 2025</span><span class="c-title">Presentadora del Festival de cine de Guadalajara FESCIGU</span><span class="c-role">Presentación</span></li>
-          
-          <li><span class="c-year">2024 – 2025</span><span class="c-title">Gira con el espectáculo familiar “Planeta al habla”<small class="c-detail">Compañía Comando teatral</small></span><span class="c-role">Teatro</span></li>
-          
-          <li><span class="c-year">2024 – 2025</span><span class="c-title">Gira con el espectáculo familiar “Ay socorro, mamaíta”<small class="c-detail">Compañía Comando teatral</small></span><span class="c-role">Teatro</span></li>
-          
-          
-          
-          <li><span class="c-year">2023 – 2024</span><span class="c-title">Presentadora del Festival de cine de Guadalajara FESCIGU</span><span class="c-role">Presentación</span></li>
-          
-          
-        </ol>
-      </section>
-      
-      <section aria-labelledby="cv-seccion-2">
-        <h2 class="cv-section-title" id="cv-seccion-2">Formación — Cursos y talleres</h2>
-        <ol class="credit-list credit-list--detail">
-          
-          
-          <li><span class="c-year">2025 – 2026</span><span class="c-title">Técnicas Tony Barr y Lesly Kahn<small class="c-detail">Central de Cine, con Javier Alcina</small></span><span class="c-role">Cámara</span></li>
-          
-          <li><span class="c-year">2025 – 2026</span><span class="c-title">Montaje “Manzanas”<small class="c-detail">Escuela de Teatro de Guadalajara, dirigido por Ana Vélez</small></span><span class="c-role">Teatro</span></li>
-          
-          <li><span class="c-year">2025 – 2026</span><span class="c-title">Montaje “Roxane Tenorio”<small class="c-detail">Escuela de Teatro de Guadalajara, dirigido por Ana Vélez</small></span><span class="c-role">Teatro</span></li>
-          
-          <li><span class="c-year">2025 – 2026</span><span class="c-title">Curso de ficción sonora<small class="c-detail">Proceso completo de creación y producción: guion, grabación de voces y postproducción</small></span><span class="c-role">Audiovisual</span></li>
-          
-          
-          
-          <li><span class="c-year">2024 – 2025</span><span class="c-title">Producción y distribución de vídeo podcasts<small class="c-detail">RTVE</small></span><span class="c-role">Audiovisual</span></li>
-          
-          <li><span class="c-year">2024 – 2025</span><span class="c-title">Guion de series de ficción<small class="c-detail">RTVE</small></span><span class="c-role">Audiovisual</span></li>
-          
-          <li><span class="c-year">2024 – 2025</span><span class="c-title">Taller de teatro en verso<small class="c-detail">Con Ana Vélez, en la Escuela de teatro de Guadalajara</small></span><span class="c-role">Teatro</span></li>
-          
-          <li><span class="c-year">2024 – 2025</span><span class="c-title">Montaje “Soy Federico”<small class="c-detail">Dramaturgia y dirección de Ana Vélez, basado en las obras de Lorca</small></span><span class="c-role">Teatro</span></li>
-          
-          
-          
-          <li><span class="c-year">2023 – 2024</span><span class="c-title">Doblaje - Equiparación profesional<small class="c-detail">Soundub</small></span><span class="c-role">Doblaje</span></li>
-          
-          <li><span class="c-year">2023 – 2024</span><span class="c-title">Seminario Cuerpo Expresivo<small class="c-detail">Estudio Corazza, con Virginia de la Cruz y Pedro González</small></span><span class="c-role">Teatro</span></li>
-          
-          <li><span class="c-year">2023 – 2024</span><span class="c-title">Interpretación ante la cámara, en Central de Cine<small class="c-detail">Bases de la interpretación (Rocío Vidal), micro-emociones (Carmen Rico), arquetipos (Santi Senso), técnicas Tony Barr y Lesly Kahn (Javier Alcina) y técnica Chejov (Eva Manjón)</small></span><span class="c-role">Cámara</span></li>
-          
-          
-          
-          <li><span class="c-year">2022 – 2023</span><span class="c-title">Curso de especialización de voz<small class="c-detail">Soundub: doblaje, publicidad, audiolibros y locución</small></span><span class="c-role">Doblaje</span></li>
-          
-          <li><span class="c-year">2022 – 2023</span><span class="c-title">Entrenamiento actoral de iniciación<small class="c-detail">Estudio Corazza, con Violeta Pérez</small></span><span class="c-role">Teatro</span></li>
-          
-          
-        </ol>
-      </section>
-      
     </div>
   </main>
 
